@@ -319,7 +319,7 @@ int main (int argc, char**argv)
   
   ph.Install (producerNodes);
 
-  L3RateTracer::InstallAll (results_file, Seconds (1.0));
+  L3AggregateTracer::InstallAll (results_file, Seconds (1.0));
   
   Simulator::Schedule (Seconds (10.0), PrintTime, Seconds (10.0), name);
 
