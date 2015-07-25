@@ -32,10 +32,11 @@ DdosApp::GetTypeId ()
     .SetParent<App> ()
     .AddConstructor<DdosApp> ()
 
-    .AddAttribute ("AvgGap", "AverageGap",
-		   StringValue ("1ms"),
-                   MakeTimeAccessor (&DdosApp::m_avgGap),
-                   MakeTimeChecker ())
+    .AddAttribute ("Frequency", "Frequency of interest packets",
+                   StringValue ("1.0"),
+                   MakeDoubleAccessor (&DdosApp::m_frequency),
+                   MakeDoubleChecker<double> ())
+
     .AddAttribute ("Prefix","Name of the Interest",
                    StringValue ("/"),
                    MakeNameAccessor (&DdosApp::m_prefix),
@@ -58,7 +59,7 @@ DdosApp::GetTypeId ()
 
 DdosApp::DdosApp ()
   : m_rand (0, std::numeric_limits<uint32_t>::max ())
-  , m_jitter (0,1)
+  // , m_rand_time (0,1)
   , m_seq (0)
 {
 }
@@ -99,14 +100,8 @@ DdosApp::SendPacket ()
 
   m_face->ReceiveInterest (interest);
   m_transmittedInterests (interest, this, m_face);
-
-  // std::cout << "Size: " << packet->GetSize () << std::endl;
   
-  // NS_LOG_DEBUG (m_avgGap+MilliSeconds (m_rand.GetValue ()));
-  Time nextTime = m_avgGap + Time::FromDouble (m_jitter.GetValue (), Time::US);
-  NS_LOG_DEBUG ("next time: " << nextTime.ToDouble (Time::S) << "s");
-  m_nextSendEvent = Simulator::Schedule (nextTime,
-        				 &DdosApp::SendPacket, this);
+  m_nextSendEvent = Simulator::Schedule (Seconds(m_rand_time->GetValue()), &DdosApp::SendPacket, this);
 }
 
 void
@@ -130,22 +125,15 @@ DdosApp::StartApplication ()
   double maxInterestTo = sumOutRate / 40;
   double maxDataBack = sumOutRate / 1146;
 
+  m_rand_time = new UniformVariable (0.0, 2 * 1.0 / m_frequency);
+
   if (m_evilBit)
     {
-      if (m_dataBasedLimit)
-        {
-          m_avgGap = Seconds (0.1 / maxDataBack);
-        }
-      else
-        {
-          m_avgGap = Seconds (1 / maxInterestTo);
-        }
-      // std::cout << "evil Gap: " << m_avgGap.ToDouble (Time::S) << "s\n";
+      // std::cout << "evil freq: " << m_frequency << "s\n";
     }
   else
     {
-      // m_avgGap = Seconds (2 * 1 / maxDataBack); // request 50% of maximum link capacity
-      // std::cout << "good Gap: " << m_avgGap.ToDouble (Time::S) << "s\n";
+      // std::cout << "good freq: " << m_frequency << "s\n";
     }
   
   App::StartApplication ();

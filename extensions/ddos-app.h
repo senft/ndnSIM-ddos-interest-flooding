@@ -62,12 +62,12 @@ protected:
   
 private:
   UniformVariable m_rand; ///< @brief nonce generator
-  UniformVariable m_jitter; ///< @brief nonce generator
+  RandomVariable *m_rand_time; ///< @brief nonce generator
   uint32_t        m_seq;  ///< @brief currently requested sequence number
   EventId         m_nextSendEvent;
   Time            m_lifetime;
 
-  Time m_avgGap; ///< @brief average gap between interests (should be short, but still should be, otherwise simulation will never finishes)
+  double m_frequency;
   // default interest
   // InterestHeader m_defaultInterest;
   Name m_prefix;

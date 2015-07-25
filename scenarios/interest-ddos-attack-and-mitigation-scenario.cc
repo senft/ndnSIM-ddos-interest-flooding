@@ -298,7 +298,7 @@ int main (int argc, char**argv)
     {
       ApplicationContainer goodApp;
       goodAppHelper.SetPrefix ("/good/"+Names::FindName (*node));
-      goodAppHelper.SetAttribute ("AvgGap", TimeValue (Seconds (1.100 / maxNonCongestionShare)));
+      goodAppHelper.SetAttribute ("Frequency", DoubleValue(100));
       
       goodApp.Add (goodAppHelper.Install (*node));
 
@@ -310,6 +310,7 @@ int main (int argc, char**argv)
     {
       ApplicationContainer evilApp;
       evilAppHelper.SetPrefix ("/evil/"+Names::FindName (*node));
+      evilAppHelper.SetAttribute ("Frequency", DoubleValue(1000));
       evilApp.Add (evilAppHelper.Install (*node));
       
       UniformVariable rand (0, 1);
