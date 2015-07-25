@@ -65,12 +65,12 @@ int main (int argc, char**argv)
 
   AppHelper evilAppHelper ("DdosApp");
   evilAppHelper.SetAttribute ("Evil", BooleanValue (true));
-  evilAppHelper.SetAttribute ("LifeTime", StringValue ("1s"));
-  evilAppHelper.SetAttribute ("DataBasedLimits", BooleanValue (true));
+  evilAppHelper.SetAttribute ("LifeTime", StringValue ("2s"));
+  evilAppHelper.SetAttribute ("DataBasedLimits", BooleanValue (false));
   
   AppHelper goodAppHelper ("DdosApp");
-  goodAppHelper.SetAttribute ("LifeTime",  StringValue ("1s"));
-  goodAppHelper.SetAttribute ("DataBasedLimits", BooleanValue (true));
+  goodAppHelper.SetAttribute ("LifeTime",  StringValue ("2s"));
+  goodAppHelper.SetAttribute ("DataBasedLimits", BooleanValue (false));
 
   AppHelper ph ("ns3::ndn::Producer");
   ph.SetPrefix ("/good");
@@ -313,8 +313,8 @@ int main (int argc, char**argv)
       evilApp.Add (evilAppHelper.Install (*node));
       
       UniformVariable rand (0, 1);
-      evilApp.Start (Seconds (300.0) + Time::FromDouble (rand.GetValue (), Time::MS));
-      evilApp.Stop (Seconds (600.0) + Time::FromDouble (rand.GetValue (), Time::MS));
+      evilApp.Start (Minutes (1) + Time::FromDouble (rand.GetValue (), Time::MS));
+      evilApp.Stop (Minutes (6) + Time::FromDouble (rand.GetValue (), Time::MS));
     }
   
   ph.Install (producerNodes);
