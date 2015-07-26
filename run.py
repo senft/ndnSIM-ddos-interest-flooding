@@ -273,11 +273,11 @@ class SatisfactionNumberOfAttackersFigures (SatisfactionMinManFigures):
 
 try:
     isp = InterestDdosAttack (name="attack-isp",
-                              algorithms = ["fairness", "satisfaction-accept", "satisfaction-pushback"],
-                              topologies = ["7018.r0"],
-                              evils = [140],
-                              good  = 0, # number of client nodes minus number of evil nodes
-                              runs = range(1,11), 
+                              algorithms = ["satisfaction-accept", "satisfaction-pushback"],
+                              topologies = ["AS-3967_leaf"],
+                              evils = [14],
+                              good  = 42, # number of client nodes minus number of evil nodes
+                              runs = range(1, 21), 
                               folder = "attackISP",
                               producer = "gw",
                               defaultRtt = "330ms")
