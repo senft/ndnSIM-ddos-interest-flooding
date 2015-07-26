@@ -230,24 +230,11 @@ int main (int argc, char**argv)
       Names::Rename (name, "good-"+name);
     }
 
-  while (producers.size () < 1)
-    {
-      Ptr<Node> node = 0;
-      if (producerLocation == "gw")
-        {
-          UniformVariable randVar (0, gw.GetN ());
-          node = gw.Get (randVar.GetValue ());
-        }
-      else if (producerLocation == "bb")
-        {
-          UniformVariable randVar (0, bb.GetN ());
-          node = bb.Get (randVar.GetValue ());
-        }
-      
+  for_each (gw.Begin (), gw.End (), [&] (Ptr<Node> node) {
       producers.insert (node);
       string name = Names::FindName (node);
-      Names::Rename (name, "producer-"+name);
-    }
+      Names::Rename (name, "producer-" + name);
+    });
   
   auto assignNodes = [&os](NodeContainer &aset, const string &str) {
     return [&os, &aset, &str] (Ptr<Node> node)
