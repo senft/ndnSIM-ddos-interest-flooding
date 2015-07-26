@@ -122,9 +122,6 @@ DdosApp::StartApplication ()
       sumOutRate += (dataRate.Get ().GetBitRate () / 8);
     }
 
-  double maxInterestTo = sumOutRate / 40;
-  double maxDataBack = sumOutRate / 1146;
-
   m_rand_time = new UniformVariable (0.0, 2 * 1.0 / m_frequency);
 
   if (m_evilBit)

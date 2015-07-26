@@ -289,8 +289,7 @@ int main (int argc, char**argv)
       
       goodApp.Add (goodAppHelper.Install (*node));
 
-      UniformVariable rand (0, 1);
-      goodApp.Start (Seconds (0.0) + Time::FromDouble (rand.GetValue (), Time::S));
+      goodApp.Start (Seconds (0.0));
     }
   
   for (NodeContainer::Iterator node = evilNodes.Begin (); node != evilNodes.End (); node++)
@@ -300,9 +299,8 @@ int main (int argc, char**argv)
       evilAppHelper.SetAttribute ("Frequency", DoubleValue(1000));
       evilApp.Add (evilAppHelper.Install (*node));
       
-      UniformVariable rand (0, 1);
-      evilApp.Start (Minutes (1) + Time::FromDouble (rand.GetValue (), Time::MS));
-      evilApp.Stop (Minutes (6) + Time::FromDouble (rand.GetValue (), Time::MS));
+      evilApp.Start (Minutes (1));
+      evilApp.Stop (Minutes (6));
     }
   
   ph.Install (producerNodes);

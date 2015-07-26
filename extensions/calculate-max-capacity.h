@@ -48,8 +48,7 @@ public:
     tie (edge, endEdge) = out_edges (v, g);
     if (edge == endEdge)
       {
-        double rank = get (vertex_rank, g, v);
-        
+        // double rank = get (vertex_rank, g, v);
         // cout << "*" << v << " (" << rank << ")" << endl;
         return;
       }
