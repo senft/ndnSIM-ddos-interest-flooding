@@ -78,14 +78,40 @@ int main (int argc, char**argv)
   ph.SetPrefix ("/good");
   ph.SetAttribute ("PayloadSize", StringValue("1100"));
   
-  string name = prefix;
-  name += "-topo-" + topology;
-  name += "-evil-" + boost::lexical_cast<string> (badCount);
-  name += "-good-" + boost::lexical_cast<string> (goodCount);
-  name += "-producer-" + producerLocation;
-  name += "-run-"  + boost::lexical_cast<string> (Run);
+  // string name = prefix;
+  // name += "topo=" + topology;
+  // name += "-evil-" + boost::lexical_cast<string> (badCount);
+  // name += "-good-" + boost::lexical_cast<string> (goodCount);
+  // name += "-producer-" + producerLocation;
+  // name += "-run-"  + boost::lexical_cast<string> (Run);
+
+  string name;
+  name += "topo=" + topology;
+  name += "_mar=0";
+  name += "_ftbm=0";
+  if (prefix == "satisfaction-accept")
+    {
+      name += "_detection=4";
+    }
+  else if (prefix == "satisfaction-pushback")
+    {
+      name += "_detection=5";
+    }
+  name += "_numServers=3";
+  name += "_payloadSize=1100";
+  name += "_numClients=42@100";
+  name += "_numAttackers=14@1000";
+  name += "_numMonitors=0";
+  name += "_tau=0";
+  name += "_observationPeriod=0s";
+  name += "_gamma=0";
+  name += "_cacheSize=0";
+  name += "_pitSize=5000";
+  name += "_pitLifetime=2s";
+  name += "_run=1";
+  name += "_seed=" + boost::lexical_cast<string>(Run);
   
-  string results_file = "results/" + folder + "/" + name + ".txt";
+  string results_file = "results/" + folder + "/" + name + "-l3trace.txt";
   string meta_file    = "results/" + folder + "/" + name + ".meta";
   string graph_dot_file    = "results/" + folder + "/" + name + ".dot";
   string graph_pdf_file    = "results/" + folder + "/" + name + ".pdf";
@@ -276,8 +302,8 @@ int main (int argc, char**argv)
   double maxNonCongestionShare = 0.8 * calculateNonCongestionFlows (goodNodes, producerNodes);
   os << "maxNonCongestionShare   " << maxNonCongestionShare << endl;
 
-  saveActualGraph (graph_dot_file, NodeContainer (goodNodes, evilNodes));
-  system (("twopi -Tpdf \"" + graph_dot_file + "\" > \"" + graph_pdf_file + "\"").c_str ());
+  // saveActualGraph (graph_dot_file, NodeContainer (goodNodes, evilNodes));
+  // system (("twopi -Tpdf \"" + graph_dot_file + "\" > \"" + graph_pdf_file + "\"").c_str ());
   cout << "Write effective topology graph to: " << graph_pdf_file << endl;
   cout << "Max non-congestion share:   " << maxNonCongestionShare << endl;
 
@@ -311,15 +337,15 @@ int main (int argc, char**argv)
   
   Simulator::Schedule (Seconds (10.0), PrintTime, Seconds (10.0), name);
 
-  Simulator::Stop (Seconds (900.0));
+  Simulator::Stop (Minutes (9.0));
   Simulator::Run ();
   Simulator::Destroy ();
  
   L3RateTracer::Destroy ();
 
-  cerr << "Archiving to: " << results_file << ".bz2" << endl;
-  system (("rm -f \"" + results_file + ".bz2" + "\"").c_str() );
-  system (("bzip2 \"" + results_file + "\"").c_str() );
+  // cerr << "Archiving to: " << results_file << ".bz2" << endl;
+  // system (("rm -f \"" + results_file + ".bz2" + "\"").c_str() );
+  // system (("bzip2 \"" + results_file + "\"").c_str() );
   
   return 0;
 }
