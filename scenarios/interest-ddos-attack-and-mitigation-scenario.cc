@@ -62,6 +62,8 @@ int main (int argc, char**argv)
 
   Config::SetGlobal ("RngRun", IntegerValue (Run));
   StackHelper helper;
+  helper.SetContentStore("ns3::ndn::cs::Nocache");
+  helper.SetPit("ns3::ndn::pit::Persistent", "MaxSize", "5000");
 
   AppHelper evilAppHelper ("DdosApp");
   evilAppHelper.SetAttribute ("Evil", BooleanValue (true));
