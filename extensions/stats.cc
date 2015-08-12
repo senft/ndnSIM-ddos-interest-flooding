@@ -56,6 +56,7 @@ Stats<Parent>::GetTypeId ()
     .SetGroupName ("Ndn")
     .template SetParent<Parent> ()
     .template AddConstructor< Stats<Parent> > ()
+    .template AddTraceSource ("PITEntries",  "PITEntries",  MakeTraceSourceAccessor (&Stats::pitEntriesTrace))
     ;
   
   return tid;
@@ -100,18 +101,21 @@ Stats<Parent>::NotifyNewAggregate ()
   super::NotifyNewAggregate ();
 }
 
-// template<class Parent>
-// void
-// Stats<Parent>::DidCreatePitEntry (Ptr<Face> inFace,
-//                                   Ptr<const Interest> interest,
-//                                   Ptr<pit::Entry> pitEntry)
-// {
-//   // NS_LOG_FUNCTION (inFace);
-//   super::DidCreatePitEntry (inFace, interest, pitEntry);
+template<class Parent>
+void
+Stats<Parent>::DidCreatePitEntry (Ptr<Face> inFace,
+                                  Ptr<const Interest> interest,
+                                  Ptr<pit::Entry> pitEntry)
+{
+  // NS_LOG_FUNCTION (inFace);
+  super::DidCreatePitEntry (inFace, interest, pitEntry);
 
-//   std::pair<tree_type::iterator, bool> item = m_tree.insert (interest->GetName ().cut (1), LoadStatsNode ());
-//   item.first->payload ().AddIncoming (inFace);
-// }
+  // std::pair<tree_type::iterator, bool> item = m_tree.insert (interest->GetName ().cut (1), LoadStatsNode ());
+  // item.first->payload ().AddIncoming (inFace);
+
+  // std::cout << super::m_pit->GetSize() << std::endl;
+  pitEntriesTrace(super::m_pit->GetSize());
+}
 
 template<class Parent>
 void

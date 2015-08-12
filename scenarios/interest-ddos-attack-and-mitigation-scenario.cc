@@ -29,6 +29,7 @@ using namespace ns3::ndn;
 using namespace std;
 
 #include "calculate-max-capacity.h"
+#include "pit-tracer.h"
 
 uint32_t Run = 1;
 
@@ -112,6 +113,7 @@ int main (int argc, char**argv)
   name += "_seed=" + boost::lexical_cast<string>(Run);
   
   string results_file = "results/" + folder + "/" + name + "-l3trace.txt";
+  string pit_file = "results/" + folder + "/" + name + "-pit.txt";
   string meta_file    = "results/" + folder + "/" + name + ".meta";
   string graph_dot_file    = "results/" + folder + "/" + name + ".dot";
   string graph_pdf_file    = "results/" + folder + "/" + name + ".pdf";
@@ -160,6 +162,7 @@ int main (int argc, char**argv)
   NodeContainer leaves;
   NodeContainer gw;
   NodeContainer bb;
+  NodeContainer routers;
   for_each (NodeList::Begin (), NodeList::End (), [&] (Ptr<Node> node) {
       if (Names::FindName (node).compare (0, 5, "leaf-")==0)
         {
@@ -172,6 +175,10 @@ int main (int argc, char**argv)
       else if (Names::FindName (node).compare (0, 3, "bb-")==0)
         {
           bb.Add (node);
+        }
+      else
+        {
+          routers.Add (node);
         }
     });
 
@@ -334,6 +341,7 @@ int main (int argc, char**argv)
   ph.Install (producerNodes);
 
   L3AggregateTracer::InstallAll (results_file, Seconds (10.0));
+  PitTracer::Install (routers, pit_file, Seconds (10.0));
   
   Simulator::Schedule (Seconds (10.0), PrintTime, Seconds (10.0), name);
 

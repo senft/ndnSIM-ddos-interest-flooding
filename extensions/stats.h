@@ -66,10 +66,10 @@ public:
   RemoveFace (Ptr<Face> face);
 
 protected:
-  // virtual void
-  // DidCreatePitEntry (Ptr<Face> inFace,
-  //                    Ptr<const Interest> interest,
-  //                    Ptr<pit::Entry> pitEntry);
+  virtual void
+  DidCreatePitEntry (Ptr<Face> inFace,
+                     Ptr<const Interest> interest,
+                     Ptr<pit::Entry> pitEntry);
 
   virtual void
   DidSendOutInterest (Ptr<Face> inFace,
@@ -105,6 +105,8 @@ private:
 
   tree_type m_tree;
   bool m_statsRefreshScheduled;
+
+  TracedCallback<uint32_t> pitEntriesTrace;
 };
 
 } // namespace fw
