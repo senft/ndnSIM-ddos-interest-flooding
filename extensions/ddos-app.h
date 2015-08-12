@@ -63,7 +63,6 @@ protected:
 private:
   UniformVariable m_rand; ///< @brief nonce generator
   RandomVariable *m_rand_time; ///< @brief nonce generator
-  uint32_t        m_seq;  ///< @brief currently requested sequence number
   EventId         m_nextSendEvent;
   Time            m_lifetime;
 
@@ -73,6 +72,18 @@ private:
   Name m_prefix;
   bool m_evilBit;
   bool m_dataBasedLimit;
+
+  // Zipf
+  UniformVariable m_SeqRng;
+  uint32_t m_N;  //number of the contents
+  double m_q;  //q in (k+q)^s
+  double m_s;  //s in (k+q)^s
+  std::vector<double> m_Pcum;  //cumulative probability
+  uint32_t GetNextSeq();
+  void SetNumberOfContents (uint32_t numOfContents);
+
+  // Evil
+  UniformVariable     m_randomSeqId;
 };
 
 #endif

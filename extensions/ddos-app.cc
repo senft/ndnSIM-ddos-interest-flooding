@@ -60,8 +60,8 @@ DdosApp::GetTypeId ()
 DdosApp::DdosApp ()
   : m_rand (0, std::numeric_limits<uint32_t>::max ())
   // , m_rand_time (0,1)
-  , m_seq (0)
 {
+    m_randomSeqId = UniformVariable (1000 + 1, std::numeric_limits<uint32_t>::max ());
 }
 
 DdosApp::~DdosApp ()
@@ -86,7 +86,7 @@ DdosApp::OnData (const Ptr<const Data> &data)
 void
 DdosApp::SendPacket ()
 {
-  m_seq++;
+  int m_seq = GetNextSeq();
   // send packet
   Ptr<NameComponents> nameWithSequence = Create<NameComponents> (m_prefix);
   nameWithSequence->appendSeqNum (m_seq);
@@ -134,6 +134,7 @@ DdosApp::StartApplication ()
     }
   
   App::StartApplication ();
+  SetNumberOfContents(1000);
   SendPacket ();
 }
 
@@ -152,3 +153,58 @@ DdosApp::DelayedStop ()
   // std::cerr << "# references after delayed stop: " << m_face->GetReferenceCount () << std::endl;
   App::StopApplication ();
 }
+
+uint32_t
+DdosApp::GetNextSeq()
+{
+    if(m_evilBit)
+    {
+        return m_randomSeqId.GetValue();
+    }
+    else
+    {
+        uint32_t content_index = 1; //[1, m_N]
+        double p_sum = 0;
+
+        double p_random = m_SeqRng.GetValue();
+        while (p_random == 0)
+        {
+            p_random = m_SeqRng.GetValue();
+        }
+        // NS_LOG_LOGIC("p_random="<<p_random);
+        for (uint32_t i=1; i<=m_N; i++)
+        {
+            p_sum = m_Pcum[i];   //m_Pcum[i] = m_Pcum[i-1] + p[i], p[0] = 0;   e.g.: p_cum[1] = p[1], p_cum[2] = p[1] + p[2]
+            if (p_random <= p_sum)
+            {
+                content_index = i;
+                break;
+            }
+        }
+        // NS_LOG_DEBUG("RandomNumber="<<content_index);
+        return content_index;
+    }
+}
+
+void
+DdosApp::SetNumberOfContents (uint32_t numOfContents)
+{
+    m_N = numOfContents - 1;
+
+    // NS_LOG_DEBUG (m_q << " and " << m_s << " and " << m_N);
+
+    m_Pcum = std::vector<double> (m_N + 1);
+
+    m_Pcum[0] = 0.0;
+    for (uint32_t i=1; i<=m_N; i++)
+    {
+        m_Pcum[i] = m_Pcum[i-1] + 1.0 / std::pow(i+m_q, m_s);
+    }
+
+    for (uint32_t i=1; i<=m_N; i++)
+    {
+        m_Pcum[i] = m_Pcum[i] / m_Pcum[m_N];
+        // NS_LOG_LOGIC ("Cumulative probability [" << i << "]=" << m_Pcum[i]);
+    }
+}
+
