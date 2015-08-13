@@ -119,7 +119,7 @@ class ConvertTopologies (Processor):
         pass
 
 class InterestDdosAttack (Processor):
-    def __init__ (self, name, algorithms, topologies, evils, good, runs, folder, producer="gw", defaultRtt="250ms"):
+    def __init__ (self, name, algorithms, topologies, frequencies, evils, good, runs, folder, producer="gw", defaultRtt="250ms"):
         self.name = name
         self.algorithms = algorithms
         self.topologies = topologies
@@ -128,25 +128,28 @@ class InterestDdosAttack (Processor):
         self.runs = runs
         self.folder = folder
         self.producer = producer
+        self.frequencies = frequencies
         self.defaultRtt = defaultRtt
 
     def simulate (self):
         for algorithm in self.algorithms:
             for topology in self.topologies:
-                for evil in self.evils:
-                    for run in self.runs:
-                        cmdline = ["./build/interest-ddos-attack-and-mitigation-scenario",
-                                   "--algorithm=%s" % algorithm,
-                                   "--run=%d" % run,
-                                   "--topology=%s" % topology,
-                                   "--badCount=%d" % evil,
-                                   "--goodCount=%d" % self.good,
-                                   "--folder=%s" % self.folder,
-                                   "--producer=%s" % self.producer,
-                                   "--defaultRtt=%s" % self.defaultRtt,
-                                   ]
-                        job = SimulationJob (cmdline)
-                        pool.put (job)
+                for frequency in self.frequencies:
+                    for evil in self.evils:
+                        for run in self.runs:
+                            cmdline = ["./build/interest-ddos-attack-and-mitigation-scenario",
+                                       "--algorithm=%s" % algorithm,
+                                       "--frequency=%d" % frequency,
+                                       "--run=%d" % run,
+                                       "--topology=%s" % topology,
+                                       "--badCount=%d" % evil,
+                                       "--goodCount=%d" % self.good,
+                                       "--folder=%s" % self.folder,
+                                       "--producer=%s" % self.producer,
+                                       "--defaultRtt=%s" % self.defaultRtt,
+                                       ]
+                            job = SimulationJob (cmdline)
+                            pool.put (job)
 
     def postprocess (self):
         print "Convert data to sqlite and reduce data size"
@@ -275,6 +278,7 @@ try:
     isp = InterestDdosAttack (name="attack-isp",
                               algorithms = ["satisfaction-accept", "satisfaction-pushback"],
                               topologies = ["AS-3967_leaf"],
+                              frequencies = [500, 1000, 10000],
                               evils = [14],
                               good  = 42, # number of client nodes minus number of evil nodes
                               runs = range(1, 21), 

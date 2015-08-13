@@ -48,12 +48,14 @@ int main (int argc, char**argv)
   Time defaultRtt = Seconds (0.25);
   uint32_t badCount = 1;
   uint32_t goodCount = 1;
+  uint32_t attackersFrequency = 1000;
   string folder = "tmp";
   
   CommandLine cmd;
   cmd.AddValue ("topology", "Topology", topology);
   cmd.AddValue ("run", "Run", Run);
   cmd.AddValue ("algorithm", "DDoS mitigation algorithm", prefix);
+  cmd.AddValue ("frequency", "Request rate of the attackers", attackersFrequency);
   cmd.AddValue ("producer", "Producer location: gw or bb", producerLocation);
   cmd.AddValue ("badCount", "Number of bad guys", badCount);
   cmd.AddValue ("goodCount", "Number of good guys", goodCount);
@@ -101,7 +103,8 @@ int main (int argc, char**argv)
   name += "_numServers=3";
   name += "_payloadSize=1100";
   name += "_numClients=42@100";
-  name += "_numAttackers=14@1000";
+  name += "_numAttackers=14@";
+  name += boost::lexical_cast<string>(attackersFrequency);
   name += "_numMonitors=0";
   name += "_tau=0";
   name += "_observationPeriod=0s";
