@@ -284,7 +284,7 @@ try:
                               runs = range(1, 21), 
                               folder = "attackISP",
                               producer = "gw",
-                              defaultRtt = "330ms")
+                              defaultRtt = "150ms")
     isp.run ()
 
     SatisfactionMinManFigures (name="figure9", scenario=isp).run ()
